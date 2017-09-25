@@ -1,0 +1,11 @@
+---
+- hosts: cisco
+  gather_facts: False
+  connection: local
+  tasks:
+    - nxos_config:
+        lines:
+          - no switchport
+          - ip address 172.16.1.1/24
+        parents: interface Ethernet1/20
+        provider: "{{login_info}}"
