@@ -306,7 +306,7 @@ snmp-server user exampleuser network-admin auth sha 0x7071c014b53743ca568dd2c3fd
 ## Example 5 - Grabbing a show version
 
 ### Ansible
-For Ansible there is a [nxos_command module](http://docs.ansible.com/ansible/latest/nxos_command_module.html) that is available to use for running an arbitrary command.  The  Ansible playbook demonstrated is stored as [showversion.yml](showversion.yml).
+For Ansible there is a [nxos_facts module](http://docs.ansible.com/ansible/latest/nxos_facts_module.html) that is available to use for collecting facts about a system.  The  Ansible playbook demonstrated is stored as [showversion.yml](showversion.yml).
 
 ```
 ---
