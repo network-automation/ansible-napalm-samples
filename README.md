@@ -3,7 +3,7 @@ This GitHub Repo focuses on comparing Ansible NAPALM on Cisco NXOS.
 
 ## Table of Contents
 - [Example 1 - Adding an IP address to an interface](#example-1---adding-an-ip-address-to-an-interface)
-
+- [Example 2 - Backing up a Config](#example-2---backing-up-a-config)
 ## Example 1 - Adding an IP address to an interface
 
 ### Ansible
@@ -81,6 +81,8 @@ Again Ansible can use the nxos_config module for easy backups.  There is a backu
         provider: "{{login_info}}"
 ```        
 
+Run the playbook with `ansible-playbook backup.yml`
+
 After running the playbook there will be a timestamped config stored under the directory backup:
 ```
 [root@localhost ~]# ls backup
@@ -88,3 +90,27 @@ n9k_config.2017-09-26@10:21:28
 ```
 
 ### NAPALM
+
+NAPALM calls a backup file a *checkpoint* file and can be retrieved using the `_get_checkpoint_file()`.  The code snippet below is only a portion of the code, the whole python file is stored as [get_config.py](get_config.py).
+
+```
+###config snippet, rest of config removed for brevity
+checkpoint = device._get_checkpoint_file()
+#print(checkpoint)
+
+#create the directory if it does not exist
+if not os.path.exists("backup"):
+  os.makedirs("backup")
+  
+f = open("backup/" + nxos_facts['hostname'] + "." + time, 'w')
+f.write(checkpoint)
+f.close
+device.close()
+###config snippet, rest of config removed for brevity
+```
+
+Run the python program with `python backup.py`.  The python program will create a folder:
+```
+[root@localhost naplam_examples]# ls backup/
+switch.2017-09-26@15-11
+```
