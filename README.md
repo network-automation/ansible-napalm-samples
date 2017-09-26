@@ -6,9 +6,10 @@ This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-
 - [Example 2 - Adding an IP address to an interface](#example-2---adding-an-ip-address-to-an-interface)
 - [Example 3 - Adding a new VLAN](#example-3---adding-a-new-vlan)
 - [Example 4 - Change the SNMP password](#example-4---change-the-snmp-password)
+- [Example 5 - Grabbing a show version](#example-4---change-the-snmp-password)
 
-NAPALM also has [Ansible modules](https://github.com/napalm-automation/napalm-ansible) so you can use Ansible to run NAPLAM
-- [Example 6 - Changing hostname and domain_name]
+NAPALM also has [Ansible modules](https://github.com/napalm-automation/napalm-ansible) so you can use Ansible to run NAPLAM.  Example 6 shows NAPALM being used in conjunction with Ansible compared to native Ansible modules.
+- [Example 6 - Changing hostname and domain_name](#example-6---changing-hostname-and-domain_name)
 
 
 ## Example 1 - Backing up a Config
@@ -301,6 +302,11 @@ switch# sh run | i snmp
 snmp-server user admin network-admin auth md5 0xc1ddb036df145c775510428fe3c6b553 priv 0xc1ddb036df145c775510428fe3c6b553 localizedkey
 snmp-server user exampleuser network-admin auth sha 0x7071c014b53743ca568dd2c3fd70005c5e21db5e localizedkey
 ```
+## Example 5 - Grabbing a show version
+
+### Ansible
+
+### NAPALM
 
 ## Example 6 - Changing hostname and domain_name
 
