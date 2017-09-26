@@ -1,9 +1,10 @@
 # Ansible and NAPALM Samples
-This GitHub Repo focuses on comparing Ansible NAPALM on Cisco NXOS.
+This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-automation) and [NAPALM](https://github.com/napalm-automation/napalm) on Cisco NXOS.
 
 ## Table of Contents
 - [Example 1 - Adding an IP address to an interface](#example-1---adding-an-ip-address-to-an-interface)
 - [Example 2 - Backing up a Config](#example-2---backing-up-a-config)
+
 ## Example 1 - Adding an IP address to an interface
 
 ### Ansible
@@ -93,7 +94,7 @@ n9k_config.2017-09-26@10:21:28
 
 NAPALM calls a backup file a *checkpoint* file and can be retrieved using the `_get_checkpoint_file()`.  The code snippet below is only a portion of the code, the whole python file is stored as [get_config.py](get_config.py).
 
-```
+```python
 ###config snippet, rest of config removed for brevity
 checkpoint = device._get_checkpoint_file()
 #print(checkpoint)
@@ -101,7 +102,7 @@ checkpoint = device._get_checkpoint_file()
 #create the directory if it does not exist
 if not os.path.exists("backup"):
   os.makedirs("backup")
-  
+
 f = open("backup/" + nxos_facts['hostname'] + "." + time, 'w')
 f.write(checkpoint)
 f.close
