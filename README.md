@@ -10,7 +10,7 @@ This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-
 
 ### Ansible
 
-Again Ansible can use the nxos_config module for easy backups.  There is a backup parameter that can just be turned to `yes`.  This playbook is stored as [backup.yml](backup.yml) on this git repo.
+Ansible can use the nxos_config module for easy backups.  There is a backup parameter that can just be turned to `yes`.  This playbook is stored as [backup.yml](backup.yml) on this git repo.
 
 ```
 ---
