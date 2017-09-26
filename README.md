@@ -6,9 +6,10 @@ This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-
 - [Example 2 - Adding an IP address to an interface](#example-2---adding-an-ip-address-to-an-interface)
 - [Example 3 - Adding a new VLAN](#example-3---adding-a-new-vlan)
 - [Example 4 - Change the SNMP password](#example-4---change-the-snmp-password)
-- [Example 5 - Grabbing a show version](#example-4---change-the-snmp-password)
 
-NAPALM also has [Ansible modules](https://github.com/napalm-automation/napalm-ansible) so you can use Ansible to run NAPLAM.  Example 6 shows NAPALM being used in conjunction with Ansible compared to native Ansible modules.
+NAPALM also has [Ansible modules](https://github.com/napalm-automation/napalm-ansible) so you can use Ansible to run NAPLAM.  Example 5 and 6 shows NAPALM being used in conjunction with Ansible compared to native Ansible modules.
+
+- [Example 5 - Grabbing a show version](#example-5---grabbing-a-show-version)
 - [Example 6 - Changing hostname and domain_name](#example-6---changing-hostname-and-domain_name)
 
 
@@ -305,8 +306,76 @@ snmp-server user exampleuser network-admin auth sha 0x7071c014b53743ca568dd2c3fd
 ## Example 5 - Grabbing a show version
 
 ### Ansible
+For Ansible there is a [nxos_command module](http://docs.ansible.com/ansible/latest/nxos_command_module.html) that is available to use for running an arbitrary command.  The  Ansible playbook demonstrated is stored as [showversion.yml](showversion.yml).
+
+```
+---
+- hosts: cisco
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: run show version
+      nxos_facts:
+        provider: "{{login_info}}"
+    - debug:
+        var: ansible_net_version
+```
+Run with the playbook with: `ansible-playbook showversion.yml`        
+
+```
+[root@localhost ~]# ansible-playbook showversion.yml
+
+PLAY [cisco] ******************************************************************
+
+TASK [run show version] *******************************************************
+ok: [n9k]
+
+TASK [debug] ******************************************************************
+ok: [n9k] => {
+    "result.stdout_lines[0][14]": "  NXOS: version 7.0(3)I7(1)"
+}
+
+PLAY RECAP ********************************************************************
+n9k                        : ok=2    changed=0    unreachable=0    failed=0
+```
 
 ### NAPALM
+For Ansible with NAPALM there is a [napalm_get_facts](https://github.com/napalm-automation/napalm-ansible) that is available to use.  The  Ansible playbook demonstrated is stored as [showversion_napalm.yml](showversion_napalm.yml).
+
+```
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - napalm_get_facts:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ login_info.username }}"
+        password: "{{ login_info.password }}"
+        dev_os: "nxos"
+      register: version
+
+    - name: print data
+      debug: var=version.ansible_facts.napalm_facts.os_version
+```
+Run with the playbook with: `ansible-playbook showversion_napalm.yml`
+```
+[root@localhost ~]# ansible-playbook showversion_napalm.yml
+
+PLAY [cisco] ******************************************************************
+
+TASK [napalm_get_facts] *******************************************************
+ok: [n9k]
+
+TASK [print data] *************************************************************
+ok: [n9k] => {
+    "version.ansible_facts.napalm_facts.os_version": "7.0(3)I7(1)"
+}
+
+PLAY RECAP ********************************************************************
+n9k                        : ok=2    changed=0    unreachable=0    failed=0
+```
+
+Both examples show the NXOS switch is running 7.0(3)I7(1).
 
 ## Example 6 - Changing hostname and domain_name
 
@@ -323,9 +392,10 @@ For Ansible there is a [nxos_system module](http://docs.ansible.com/ansible/late
         domain_name: durham.nc.com
         provider: "{{login_info}}"
 ```        
+Run with the playbook with: `ansible-playbook hostname.yml`    
 
 ### NAPALM with Ansible
-For Ansible with NAPALM there is a [napalm_install_config](https://github.com/napalm-automation/napalm-ansible) that is available to use.  The  Ansible playbook demonstrated is stored as [hostname_napalm.yml](hostname_napalm.yml).
+For Ansible with NAPALM there is a [napalm_install_config](https://github.com/napalm-automation/napalm-ansible) that is available to use.  The  Ansible playbook demonstrated is stored as [hostname_napalm.yml](hostname_napalm.yml).  The [hostname.conf](hostname.conf) is also stored in this git repo for demonstration purposes.
 ```
 ---
 - hosts: cisco
@@ -339,4 +409,5 @@ For Ansible with NAPALM there is a [napalm_install_config](https://github.com/na
         config_file: hostname.conf
         commit_changes: True
         diff_file: initial.diff
-```        
+```  
+Run with the playbook with: `ansible-playbook hostname_napalm.yml`      

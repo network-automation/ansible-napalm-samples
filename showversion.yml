@@ -1,0 +1,10 @@
+---
+- hosts: cisco
+  connection: local
+  gather_facts: False
+  tasks:
+    - name: run show version
+      nxos_facts:
+        provider: "{{login_info}}"
+    - debug:
+        var: ansible_net_version

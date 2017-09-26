@@ -1,0 +1,13 @@
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - napalm_get_facts:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ login_info.username }}"
+        password: "{{ login_info.password }}"
+        dev_os: "nxos"
+      register: version
+
+    - name: print data
+      debug: var=version.ansible_facts.napalm_facts.os_version
