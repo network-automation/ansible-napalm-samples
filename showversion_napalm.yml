@@ -9,5 +9,5 @@
         dev_os: "nxos"
       register: version
 
-    - name: print data
-      debug: var=version.ansible_facts.napalm_facts.os_version
+    - debug:
+        var=version.ansible_facts.napalm_facts.os_version
