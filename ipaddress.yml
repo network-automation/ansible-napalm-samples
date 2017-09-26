@@ -1,6 +1,5 @@
 ---
 - hosts: cisco
-  gather_facts: False
   connection: local
   tasks:
     - nxos_config:
