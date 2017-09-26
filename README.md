@@ -1,11 +1,14 @@
 # Ansible and NAPALM Samples
 This GitHub Repo focuses on comparing Ansible NAPALM on Cisco NXOS.
 
+## Table of Contents
+- [Example 1 - Adding an IP address to an interface](#example-1---adding-an-ip-address-to-an-interface)
+
 ## Example 1 - Adding an IP address to an interface
 
 ### Ansible
 
-Ansible has a [nxos_config](http://docs.ansible.com/ansible/latest/nxos_config_module.html) specifically used for making config changes (either entire flat-files) or partials (in this case editing a single interface).  
+Ansible has a [nxos_config](http://docs.ansible.com/ansible/latest/nxos_config_module.html) specifically used for making config changes (either entire flat-files) or partials (in this case editing a single interface).  This playbook is stored as [ipaddress.yml](ipaddress.yml) on this git repo.
 ```
 - hosts: cisco
   connection: local
@@ -19,7 +22,6 @@ Ansible has a [nxos_config](http://docs.ansible.com/ansible/latest/nxos_config_m
 ```        
 
 To run a playbook use the `ansible-playbook` command.  Although not shown here the output will also have color output (yellow=changed, green=OK, red=failed.).
-
 ```
 [root@localhost ~]# ansible-playbook ipaddress.yml
 
@@ -63,6 +65,26 @@ To run the program execute the python program:
 [root@localhost naplam_examples]# python ipaddress.py
 ```
 
+## Example 2 - Backing up a Config
 
+### Ansible
 
-# Example 2 - Backing up a Config
+Again Ansible can use the nxos_config module for easy backups.  There is a backup parameter that can just be turned to `yes`.  This playbook is stored as [backup.yml](backup.yml) on this git repo.
+
+```
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - nxos_config:
+        backup: yes
+        provider: "{{login_info}}"
+```        
+
+After running the playbook there will be a timestamped config stored under the directory backup:
+```
+[root@localhost ~]# ls backup
+n9k_config.2017-09-26@10:21:28
+```
+
+### NAPALM
