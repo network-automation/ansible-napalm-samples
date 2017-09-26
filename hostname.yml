@@ -1,0 +1,8 @@
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - nxos_system:
+        hostname: n9k
+        domain_name: durham.nc.com
+        provider: "{{login_info}}"

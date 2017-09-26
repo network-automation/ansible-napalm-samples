@@ -1,0 +1,12 @@
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - napalm_install_config:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ login_info.username }}"
+        password: "{{ login_info.password }}"
+        dev_os: "nxos"
+        config_file: hostname.conf
+        commit_changes: True
+        diff_file: initial.diff
