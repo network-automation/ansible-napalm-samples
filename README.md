@@ -4,7 +4,8 @@ This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-
 ## Table of Contents
 - [Example 1 - Backing up a Config](#example-2---backing-up-a-config)
 - [Example 2 - Adding an IP address to an interface](#example-1---adding-an-ip-address-to-an-interface)
-
+- [Example 3 - Adding a new VLAN](#example-3---adding-a-new-vlan)
+- [Example 4 - Change the SNMP password](#example-4---change-the-snmp-password)
 ## Example 1 - Backing up a Config
 
 ### Ansible
@@ -119,6 +120,31 @@ To run the program execute the python program:
 ## Example 3 - Adding a new VLAN
 
 ### Ansible
+In addition to the [nxos_config module](http://docs.ansible.com/ansible/latest/nxos_config_module.html) we can use the [nxos_vlan module](http://docs.ansible.com/ansible/latest/nxos_vlan_module.html) to make this really easy.  This playbook is stored as [add_vlan.yml](add_vlan.yml) on this git repo.
+```
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - nxos_vlan:
+        vlan_id: 10
+        name: STORAGE
+        provider: "{{login_info}}"
+```        
+Run the playbook with `ansible-playbook add_vlan.yml`
+
+Check to see if the VLAN is configured with a `show running-config vlan 10`
+```
+switch# show running-config vlan 10
+
+!Command: show running-config vlan 10
+!Time: Tue Sep 19 22:39:40 2017
+
+version 7.0(3)I7(1)
+vlan 10
+vlan 10
+  name STORAGE
+```
 
 ### NAPALM
 
