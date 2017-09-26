@@ -354,8 +354,8 @@ For Ansible with NAPALM there is a [napalm_get_facts](https://github.com/napalm-
         dev_os: "nxos"
       register: version
 
-    - name: print data
-      debug: var=version.ansible_facts.napalm_facts.os_version
+    - debug:
+        var=version.ansible_facts.napalm_facts.os_version
 ```
 Run with the playbook with: `ansible-playbook showversion_napalm.yml`
 ```
