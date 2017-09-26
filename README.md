@@ -2,8 +2,8 @@
 This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-automation) and [NAPALM](https://github.com/napalm-automation/napalm) on Cisco NXOS.
 
 ## Table of Contents
-- [Example 1 - Backing up a Config](#example-2---backing-up-a-config)
-- [Example 2 - Adding an IP address to an interface](#example-1---adding-an-ip-address-to-an-interface)
+- [Example 1 - Backing up a Config](#example-1---backing-up-a-config)
+- [Example 2 - Adding an IP address to an interface](#example-2---adding-an-ip-address-to-an-interface)
 - [Example 3 - Adding a new VLAN](#example-3---adding-a-new-vlan)
 - [Example 4 - Change the SNMP password](#example-4---change-the-snmp-password)
 ## Example 1 - Backing up a Config
@@ -22,7 +22,20 @@ Again Ansible can use the nxos_config module for easy backups.  There is a backu
         provider: "{{login_info}}"
 ```        
 
-Run the playbook with `ansible-playbook backup.yml`
+Run the playbook with `ansible-playbook backup.yml`.  Although not shown here the output will also have color output (yellow=changed, green=OK, red=failed.).
+
+```
+[root@localhost ~]# ansible-playbook backup.yml
+
+PLAY [cisco] ******************************************************************
+
+TASK [nxos_config] ************************************************************
+
+ok: [n9k]
+
+PLAY RECAP ********************************************************************
+n9k                        : ok=1    changed=0    unreachable=0    failed=0
+```
 
 After running the playbook there will be a timestamped config stored under the directory backup:
 ```
@@ -86,6 +99,20 @@ PLAY RECAP ********************************************************************
 n9k                        : ok=1    changed=0    unreachable=0    failed=0
 ```
 
+Verify the interface is configured with a `show run int e1/20`
+```
+switch# sh run int e1/20
+
+!Command: show running-config interface Ethernet1/20
+!Time: Tue Sep 19 22:51:37 2017
+
+version 7.0(3)I7(1)
+
+interface Ethernet1/20
+  no switchport
+  ip address 172.16.1.1/24
+```
+
 ### NAPALM
 
 This demonstration will show NAPLAM in python only mode (meaning no third party integrations).  The code snippet below is only a portion of the code, the  python script is stored in this git repo as [ipaddress.py](ipaddress.py)
@@ -117,6 +144,20 @@ To run the program execute the python program:
 [root@localhost naplam_examples]# python ipaddress.py
 ```
 
+Verify the interface is configured with a `show run int e1/20`
+```
+switch# sh run int e1/20
+
+!Command: show running-config interface Ethernet1/20
+!Time: Tue Sep 19 22:51:37 2017
+
+version 7.0(3)I7(1)
+
+interface Ethernet1/20
+  no switchport
+  ip address 172.16.1.1/24
+```
+
 ## Example 3 - Adding a new VLAN
 
 ### Ansible
@@ -133,7 +174,7 @@ In addition to the [nxos_config module](http://docs.ansible.com/ansible/latest/n
 ```        
 Run the playbook with `ansible-playbook add_vlan.yml`
 
-Check to see if the VLAN is configured with a `show running-config vlan 10`
+Verify the VLAN is configured with a `show running-config vlan 10`
 ```
 switch# show running-config vlan 10
 
@@ -147,6 +188,47 @@ vlan 10
 ```
 
 ### NAPALM
+
+This demonstration will show NAPLAM in python only mode (meaning no third party integrations).  The code snippet below is only a portion of the code, the  python script is stored in this git repo as [add_vlan.py](add_vlan.py)
+
+```python
+###config snippet, rest of config removed for brevity
+driver = napalm.get_network_driver('nxos')
+# Connect:
+device = driver(hostname='192.168.2.3', username='admin',
+                password='Bullf00d')
+print 'Opening ...'
+device.open()
+
+config_string = """ vlan 20
+                      name HADOOP """
+
+device.load_merge_candidate(config=config_string)
+
+###config snippet, rest of config removed for brevity
+
+device.commit_config()
+
+device.close()
+```
+
+To run the program execute the python program:
+```
+[root@localhost naplam_examples]# python add_vlan.py
+```
+
+Verify with a `show vlan` or a `show run vlan 20`
+```
+switch# sh run vlan 20
+
+!Command: show running-config vlan 20
+!Time: Tue Sep 19 22:50:11 2017
+
+version 7.0(3)I7(1)
+vlan 20
+vlan 20
+  name HADOOP
+```  
 
 ## Example 4 - Change the SNMP password
 A common maintenance task for network operations teams is to change the SNMP password every so often (e.g. every 90 days).  This can also be automated with Ansible and NAPALM.  
