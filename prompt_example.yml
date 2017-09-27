@@ -1,0 +1,26 @@
+---
+- hosts: cisco
+  connection: local
+  tasks:
+    - name: diff the running-config against a provided config
+      nxos_config:
+        diff_against: intended
+        intended_config: "{{ lookup('file', 'nxos_base.cfg') }}"
+        provider: "{{login_info}}"
+
+    - name: take user input- Commit changes?  Yes or  No ?
+      pause:
+        prompt:  Type "y" for yes or "n" for no
+      register: user_result
+
+    - name: checking string syntax to becareful
+      debug:
+        var: user_result
+      failed_when: user_result["user_input"] != "n" and user_result["user_input"] != "y"
+
+    - name: commit config when user_result == yes
+      nxos_config:
+        src: nxos_base.cfg
+        save_when: modified
+        provider: "{{login_info}}"
+      when: user_result["user_input"] == "y"
