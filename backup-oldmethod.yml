@@ -1,6 +1,7 @@
 ---
 - hosts: cisco
-  connection: network_cli
+  connection: local
   tasks:
     - nxos_config:
         backup: yes
+        provider: "{{login_info}}"

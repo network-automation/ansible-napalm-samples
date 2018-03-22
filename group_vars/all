@@ -1,3 +1,9 @@
 login_info:
   username: admin
   password: Bullf00d
+
+login_info_eos:
+  username: admin
+  password: Bullf00d!
+  authorize: True
+  auth_pass: DURHAM!

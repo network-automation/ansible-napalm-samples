@@ -1,5 +1,7 @@
 # Ansible and NAPALM Samples
-This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-automation) and [NAPALM](https://github.com/napalm-automation/napalm) on Cisco NXOS.
+This GitHub Repo focuses on comparing [Ansible](https://www.ansible.com/network-automation) and [NAPALM](https://github.com/napalm-automation/napalm) on Cisco NX-OS and Arista EOS.
+
+Ansible is powerful automation software that you can learn quickly.  Ansible is an open source project, Ansible Engine is the product you can buy enterprise support for.  NAPALM is actually a Python library that implements a set of functions to interact with different router vendor devices using a unified API. NAPLAM isn't a product, but rather another open source project with a community behind it. While many networking use-cases can potentially overlap the two tools augment each other rather than compete directly.  There are even [NAPALM Ansible modules](https://github.com/napalm-automation/napalm-ansible).
 
 ## Table of Contents
 - [Example 1 - Backing up a Config](#example-1---backing-up-a-config)
@@ -22,11 +24,10 @@ Ansible can use the nxos_config module for easy backups.  There is a backup para
 ```
 ---
 - hosts: cisco
-  connection: local
+  connection: network_cli
   tasks:
     - nxos_config:
         backup: yes
-        provider: "{{login_info}}"
 ```        
 
 Run the playbook with `ansible-playbook backup.yml`.  Although not shown here the output will also have color output (yellow=changed, green=OK, red=failed.).
@@ -80,49 +81,43 @@ switch.2017-09-26@15-11
 
 ### Ansible
 
-Ansible has a [nxos_config](http://docs.ansible.com/ansible/latest/nxos_config_module.html) specifically used for making config changes (either entire flat-files) or partials (in this case editing a single interface).  This playbook is stored as [ipaddress.yml](ipaddress.yml) on this git repo.
+Ansible has a [eos_config](http://docs.ansible.com/ansible/latest/eos_config_module.html) specifically used for making config changes (either entire flat-files) or partials (in this case editing a single interface).  This playbook is stored as [ipaddress.yml](ipaddress.yml) on this git repo.
 ```
-- hosts: cisco
-  connection: local
+---
+- hosts: arista
+  connection: network_cli
   tasks:
-    - nxos_config:
+    - eos_config:
         lines:
           - no switchport
           - ip address 172.16.1.1/24
-        parents: interface Ethernet1/20
-        provider: "{{login_info}}"
+        parents: interface Ethernet1
 ```        
 
-To run a playbook use the `ansible-playbook` command.  Although not shown here the output will also have color output (yellow=changed, green=OK, red=failed.).
+To run a playbook use the `ansible-playbook` command.
 ```
 [root@localhost ~]# ansible-playbook ipaddress.yml
-
-PLAY [cisco] ******************************************************************
-
-TASK [nxos_config] ************************************************************
-ok: [n9k]
-
-PLAY RECAP ********************************************************************
-n9k                        : ok=1    changed=0    unreachable=0    failed=0
 ```
 
-Verify the interface is configured with a `show run int e1/20`
-```
-switch# sh run int e1/20
+
+Verify the interface is configured with a `show run int e1`
+
+```bash
+switch# sh run int e1
 
 !Command: show running-config interface Ethernet1/20
 !Time: Tue Sep 19 22:51:37 2017
 
 version 7.0(3)I7(1)
 
-interface Ethernet1/20
+interface Ethernet1
   no switchport
   ip address 172.16.1.1/24
 ```
 
 ### NAPALM
 
-This demonstration will show NAPLAM in python only mode (meaning no third party integrations).  The code snippet below is only a portion of the code, the  python script is stored in this git repo as [ipaddress.py](ipaddress.py)
+This demonstration will show NAPLAM in python only mode (meaning no third party integrations).  The code snippet below is only a portion of the code, the  python script is stored in this git repo as [ipaddress.py](ipaddress.py).  This example is configuring on NX-OS (versus Ansible that was running on Arista EOS).
 
 ```python
 ###config snippet, rest of config removed for brevity
@@ -172,12 +167,11 @@ In addition to the [nxos_config module](http://docs.ansible.com/ansible/latest/n
 ```
 ---
 - hosts: cisco
-  connection: local
+  connection: network_cli
   tasks:
     - nxos_vlan:
         vlan_id: 10
         name: STORAGE
-        provider: "{{login_info}}"
 ```        
 Run the playbook with `ansible-playbook add_vlan.yml`
 
@@ -250,14 +244,13 @@ For Ansible there is a [nxos_snmp_user module](http://docs.ansible.com/ansible/l
 ```
 ---
 - hosts: cisco
-  connection: local
+  connection: network_cli
   tasks:
     - nxos_snmp_user:
         user: exampleuser
         group: network-admin
         authentication: sha
         pwd: testPASS123
-        provider: "{{login_info}}"
 ```        
 To run the playbook perform a `ansible-playbook change_snmp_password.yml`
 
@@ -311,12 +304,11 @@ For Ansible there is a [nxos_facts module](http://docs.ansible.com/ansible/lates
 ```
 ---
 - hosts: cisco
-  connection: local
+  connection: network_cli
   gather_facts: False
   tasks:
     - name: run show version
       nxos_facts:
-        provider: "{{login_info}}"
     - debug:
         var: ansible_net_version
 ```
@@ -340,7 +332,7 @@ n9k                        : ok=2    changed=0    unreachable=0    failed=0
 ```
 
 ### NAPALM
-For Ansible with NAPALM there is a [napalm_get_facts](https://github.com/napalm-automation/napalm-ansible) that is available to use.  The  Ansible playbook demonstrated is stored as [showversion_napalm.yml](showversion_napalm.yml).
+For Ansible with NAPALM there is a [napalm_get_facts](https://github.com/napalm-automation/napalm-ansible) that is available to use.  The Ansible playbook demonstrated is stored as [showversion_napalm.yml](showversion_napalm.yml).  The connection method network_cli does not work with the NAPALM modules, and must be set to local.
 
 ```
 ---

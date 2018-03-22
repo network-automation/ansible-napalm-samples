@@ -1,0 +1,25 @@
+localhost
+
+[mac]
+192.168.2.1
+
+[cisco]
+n9k ansible_host=192.168.2.3 ansible_user=admin ansible_password=Bullf00d
+
+[cisco:vars]
+ansible_network_os=nxos
+
+[arista]
+eos ansible_host=192.168.2.10
+
+[arista:vars]
+ansible_network_os=eos
+ansible_become=yes
+ansible_become_method=enable
+ansible_user=admin
+ansible_password=Bullf00d!
+ansible_become_pass=DURHAM!
+
+[network:children]
+cisco
+arista

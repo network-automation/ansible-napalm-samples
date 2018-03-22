@@ -1,7 +1,8 @@
 ---
 - hosts: cisco
-  connection: network_cli
+  connection: local
   tasks:
     - nxos_vlan:
         vlan_id: 10
         name: STORAGE
+        provider: "{{login_info}}"
