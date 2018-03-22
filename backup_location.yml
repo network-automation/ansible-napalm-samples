@@ -1,0 +1,18 @@
+---
+- hosts: cisco
+  connection: network_cli
+  tasks:
+    - name: backup device configurations
+      nxos_config:
+        backup: yes
+      register: nxos_config_backup
+
+    - name: copy the backup to the desired location
+      copy:
+        src: "{{ nxos_config_backup['backup_path'] }}"
+        dest: "nxos/{{ inventory_hostname }}"
+
+    - name: delete the original file
+      file:
+        path: "{{ nxos_config_backup['backup_path'] }}"
+        state: absent
