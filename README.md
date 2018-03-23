@@ -403,3 +403,17 @@ For Ansible with NAPALM there is a [napalm_install_config](https://github.com/na
         diff_file: initial.diff
 ```  
 Run with the playbook with: `ansible-playbook hostname_napalm.yml`      
+
+---
+![Red Hat Ansible Automation](images/rh-ansible-automation.png)
+
+Red Hat® Ansible® Automation includes three products:
+
+- [Red Hat® Ansible® Engine](https://www.ansible.com/ansible-engine): a fully supported product built on the foundational capabilities of the Ansible project.
+
+- [Red Hat® Ansible® Networking Add-On](https://www.ansible.com/ansible-engine): provides support for select networking modules from Arista (EOS), Cisco (IOS, IOS XR, NX-OS), Juniper (Junos OS), Open vSwitch, and VyOS.
+
+- [Red Hat® Ansible® Tower](https://www.ansible.com/tower): makes it easy to scale automation, manage complex deployments and speed productivity. Extend the power of Ansible with workflows to streamline jobs and simple tools to share solutions with your team.
+
+Want more info?
+[Read this blog post for more info about Engine, the networking add-on and Tower](https://www.ansible.com/blog/red-hat-ansible-automation-engine-vs-tower)
