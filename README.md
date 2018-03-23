@@ -99,20 +99,13 @@ To run a playbook use the `ansible-playbook` command.
 [root@localhost ~]# ansible-playbook ipaddress.yml
 ```
 
-
 Verify the interface is configured with a `show run int e1`
 
 ```bash
-switch# sh run int e1
-
-!Command: show running-config interface Ethernet1/20
-!Time: Tue Sep 19 22:51:37 2017
-
-version 7.0(3)I7(1)
-
+eos#sh run int e1
 interface Ethernet1
-  no switchport
-  ip address 172.16.1.1/24
+   no switchport
+   ip address 172.16.1.1/24
 ```
 
 ### NAPALM
